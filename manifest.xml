@@ -1,0 +1,13 @@
+<package>
+  <description brief="sot_sandbox">
+  This package corresponds to my sandbox for sot elements.
+  </description>
+  <author>fkeith</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>...</url>
+  <depend package="roscpp"/>
+  <depend package="std_srvs"/>
+</package>
+
+
