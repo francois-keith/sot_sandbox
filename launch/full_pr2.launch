@@ -1,6 +1,6 @@
 <launch>
   <param name="robot" type="string" value="PR2" />
-  <!-- TODO -->
+  <!-- TODO: better handling of the robot parameterization -->
   <include file="$(find sot_pr2)/launch/display.launch" />
   <include file="$(find sot_sandbox)/launch/controller.launch" />
   <!--
