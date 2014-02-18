@@ -47,6 +47,7 @@ class MinimalStackOfTasks
   virtual void onInitialize();
 
   virtual void onExecute();
+  virtual void start();
 
   void fillSensors(std::map<std::string,dgsot::SensorValues> &sensorsIn);
   void setRobot(ROBOT robot);

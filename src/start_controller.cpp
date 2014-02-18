@@ -49,6 +49,7 @@ DebugFile << x << std::endl; \
 MinimalStackOfTasks::MinimalStackOfTasks()
     // <rtc-template block="initializer">
   : initialize_library_(false)
+  , started_(false)
     // </rtc-template>
 {
   RESETDEBUG5()
@@ -61,18 +62,15 @@ MinimalStackOfTasks::~MinimalStackOfTasks()
 
 void MinimalStackOfTasks::setRobot(ROBOT robot)
 {
-  switch(robot)
+  if(robot == PR2)
   {
-    case(PR2):
-    {
-      robot_config_.libname="libsot_pr2.so";
-      break;
-    }
-    case(HRP4):
-    {
-      robot_config_.libname="libsot-hrp4-controller.so";
-      break;
-    }   
+    ROS_INFO("Using the PR2 robot");
+    robot_config_.libname="libsot_pr2.so";
+  }
+  else if (robot == PR2)
+  {
+    ROS_INFO("Using the HRP4 robot");
+    robot_config_.libname="libsot-hrp4-controller.so";
   }
 }
 
@@ -182,6 +180,12 @@ MinimalStackOfTasks::logTime (const timeval& t0, const timeval& t1)
   ++timeIndex_;
 }
 
+void MinimalStackOfTasks::start()
+{
+  ROS_INFO("Start the control");
+  started_ = true;
+}
+
 void MinimalStackOfTasks::onInitialize()
 {
   if (!initialize_library_)
@@ -195,10 +199,14 @@ void MinimalStackOfTasks::onInitialize()
 void MinimalStackOfTasks::onExecute()
 {
 //  ODEBUG(m_configsets.getActiveId());
+  if (!started_)
+    return;
+
   //
   // Log control loop start time.
   captureTime (t0_);
   
+
 //  fillSensors(sensorsIn_);
   try
     {
@@ -219,8 +227,9 @@ void MinimalStackOfTasks::onExecute()
 }
 
 
-bool callback(std_srvs::Empty::Request& request, std_srvs::Empty::Response& response)
+bool callback(boost::shared_ptr<MinimalStackOfTasks>m, std_srvs::Empty::Request& request, std_srvs::Empty::Response& response)
 {
+  m->start();
   return true;
 }
 
@@ -232,8 +241,9 @@ int main (int argc, char** argv)
   boost::shared_ptr<MinimalStackOfTasks> m;
   m.reset(new MinimalStackOfTasks);
 
-  //ros::ServiceServer service = nh.advertiseService("start_dynamic_graph", callback);
-  std::string robot = "PR2";
+  ros::ServiceServer service = nh.advertiseService<std_srvs::Empty::Request, std_srvs::Empty::Response>
+    ("start_dynamic_graph", boost::bind(callback, m, _1, _2));
+  std::string robot = "";
   int frequency = 200;
   if(! nh.getParam("/robot", robot))
   {
@@ -251,13 +261,11 @@ int main (int argc, char** argv)
   }
   else
     ROS_ERROR("Robot not handled");
-//  if (robot == PR2)
-//    robot_config_.libname="libsot_pr2.so";
 
   m->onInitialize();
 
   ROS_INFO("Waiting for you to start start_dynamic_graph");
-  ros::service::waitForService	("/start_dynamic_graph");  
+  ros::service::waitForService	("/start_dynamic_graph");
 
   ros::Rate loop_rate(frequency);
   while (ros::ok())
@@ -265,7 +273,6 @@ int main (int argc, char** argv)
     m->onExecute();
     ros::spinOnce();
     loop_rate.sleep();    
-
   }
 }
 
