@@ -1,0 +1,10 @@
+<launch>
+  <param name="robot" type="string" value="PR2" />
+  <!-- TODO -->
+  <include file="$(find sot_pr2)/launch/display.launch" />
+  <include file="$(find sot_sandbox)/launch/controller.launch" />
+  <!--
+  <include file="$(find constraint2sot)/launch/sot.launch" />
+  <include file="$(find constraint2sot)/launch/dummy_cram.launch" />
+  -->
+</launch>

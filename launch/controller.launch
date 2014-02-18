@@ -1,0 +1,4 @@
+<launch>
+  <!-- convert the tasks into sot tasks -->
+  <node name="controller" pkg="sot_sandbox" type="start_controller"/>
+</launch>

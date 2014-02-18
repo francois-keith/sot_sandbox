@@ -1,6 +1,9 @@
 <package>
   <description brief="sot_sandbox">
   This package corresponds to my sandbox for sot elements.
+  It containts:
+  * an executable to start the controllers.
+  * an script to control the pattern generator using a joystick
   </description>
   <author>fkeith</author>
   <license>BSD</license>

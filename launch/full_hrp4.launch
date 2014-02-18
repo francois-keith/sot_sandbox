@@ -1,0 +1,10 @@
+<launch>
+  <param name="robot" type="string" value="HRP4" />
+  <!-- TODO -->
+  <include file="$(find hrp4_description)/launch/sot_display.launch" />
+  <include file="$(find sot_workspace)/launch/controller.launch" />
+  <!--
+  <include file="$(find constraint2sot)/launch/sot.launch" />
+  <include file="$(find constraint2sot)/launch/dummy_cram.launch" />
+  -->
+</launch>
