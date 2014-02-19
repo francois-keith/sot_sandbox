@@ -21,7 +21,7 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
 
-#define DEBUG
+//#define DEBUG
 #ifdef DEBUG
 #define ODEBUG(x) std::cout << x << std::endl
 #else
