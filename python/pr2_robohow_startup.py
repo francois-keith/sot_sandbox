@@ -35,8 +35,8 @@ solver = initialize(robot, SolverKine)
 # allows the publication of the velocity in the JointState message
 plug(solver.jointLimitator.control, ros.rosJointState.velocity)
 
+# Creates the superviser, that will handle the stack of task update
 superviser = Superviser(robot, solver, ros.rosPublish)
-superviser.synchronize()
 
 # Additional frames.
 robot.frames['l_gripper'] = robot.frames['leftGripper']
