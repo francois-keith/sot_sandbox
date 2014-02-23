@@ -1,0 +1,5 @@
+<!-- run the nodes required to use sot-pg with a joystick -->
+<launch>
+  <node name="joystick_listener" pkg="joy" type="joy_node""/>
+  <node name="joystick_sot_converter" pkg="sot_sandbox" type="joy2pg.py""/>
+</launch>
