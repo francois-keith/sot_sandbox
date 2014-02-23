@@ -11,10 +11,12 @@
 
 namespace dgsot=dynamicgraph::sot;
 
+// TODO: externalize
 enum ROBOT
 {
   PR2,
-  HRP4
+  HRP4,
+  ROMEO
 };
 /** \brief Config variables
  */

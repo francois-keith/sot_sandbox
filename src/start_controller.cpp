@@ -21,6 +21,9 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
 
+#include <boost/algorithm/string.hpp>
+
+
 //#define DEBUG
 #ifdef DEBUG
 #define ODEBUG(x) std::cout << x << std::endl
@@ -67,10 +70,15 @@ void MinimalStackOfTasks::setRobot(ROBOT robot)
     ROS_INFO("Using the PR2 robot");
     robot_config_.libname="libsot_pr2.so";
   }
-  else if (robot == PR2)
+  else if (robot == HRP4)
   {
     ROS_INFO("Using the HRP4 robot");
     robot_config_.libname="libsot-hrp4-controller.so";
+  }
+  else if (robot == ROMEO)
+  {
+    ROS_INFO("Using the Romeo robot");
+    robot_config_.libname="libsot-romeo-controller.so";
   }
 }
 
@@ -249,14 +257,22 @@ int main (int argc, char** argv)
   {
     ROS_ERROR("robot param not given");
   }
-  if (robot == "PR2" || robot == "pr2")
+  
+  boost::algorithm::to_lower(robot);
+
+  if (robot == "pr2")
   {
     m->setRobot(PR2);
     frequency = 1000;
   }
-  else if (robot == "HRP4" || robot == "hrp4")
+  else if (robot == "hrp4")
   {
     m->setRobot(HRP4);
+    frequency = 1000;
+  }
+  else if (robot == "romeo")
+  {
+    m->setRobot(ROMEO);
     frequency = 1000;
   }
   else

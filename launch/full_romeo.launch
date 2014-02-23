@@ -1,0 +1,10 @@
+<launch>
+  <param name="robot" type="string" value="ROMEO" />
+  <!-- TODO -->
+  <include file="$(find romeo_description)/launch/sot_display.launch" />
+  <include file="$(find sot_sandbox)/launch/controller.launch" />
+  <!--
+  <include file="$(find constraint2sot)/launch/sot.launch" />
+  <include file="$(find constraint2sot)/launch/dummy_cram.launch" />
+  -->
+</launch>
