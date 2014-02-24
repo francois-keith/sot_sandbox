@@ -18,6 +18,9 @@ from dynamic_graph.sot.dyninv import SolverKine
 from dynamic_graph.sot.pr2.pr2_tasks import *
 solver = initialize(robot, SolverKine)
 
+# allows the publication of the velocity in the JointState message
+plug(solver.jointLimitator.control, ros.rosJointState.velocity)
+
 
 #### Build the stack of tasks
 taskBase = Pr2BaseTask(robot)
