@@ -204,6 +204,20 @@ void MinimalStackOfTasks::onInitialize()
   }
 }
 
+void MinimalStackOfTasks::setPosition(const std::vector<double> & pos)
+{
+  position_ = pos;
+}
+
+void MinimalStackOfTasks::fillSensors(std::map<std::string,dgsot::SensorValues> & sensor)
+{
+  if (position_.size() == 0)
+    return;
+
+  sensor["joints"].setName("joints");
+  sensor["joints"].setValues(position_);
+}
+
 void MinimalStackOfTasks::onExecute()
 {
 //  ODEBUG(m_configsets.getActiveId());
@@ -215,7 +229,7 @@ void MinimalStackOfTasks::onExecute()
   captureTime (t0_);
   
 
-//  fillSensors(sensorsIn_);
+  fillSensors(sensorsIn_);
   try
     {
       m_sotController->setupSetSensors(sensorsIn_);
@@ -241,13 +255,32 @@ bool callback(boost::shared_ptr<MinimalStackOfTasks>m, std_srvs::Empty::Request&
   return true;
 }
 
+//TODO: coder of the year !
+boost::shared_ptr<MinimalStackOfTasks> m;
+
+void positionCallback(const dynamic_graph_bridge::Vector & msg)
+{
+//  ROS_INFO("I heard: [%s]", msg->data.c_str());
+  if (msg.data.size() != 0)
+  {
+      ROS_INFO("I heard the position : [%f]", msg.data.size());
+      std::vector<double> pos (msg.data.size());
+      for(unsigned i=0; i<pos.size(); ++i)
+        pos[i] = msg.data[i];
+      m->setPosition(pos);
+  }
+}
+
+
 int main (int argc, char** argv)
 {
   ros::init(argc, argv, "sampling_learned_models");
   ros::NodeHandle nh;
 
-  boost::shared_ptr<MinimalStackOfTasks> m;
   m.reset(new MinimalStackOfTasks);
+
+  //substrack to feedback
+  ros::Subscriber sub = nh.subscribe("positionFeedback", 1000, positionCallback);
 
   ros::ServiceServer service = nh.advertiseService<std_srvs::Empty::Request, std_srvs::Empty::Response>
     ("start_dynamic_graph", boost::bind(callback, m, _1, _2));

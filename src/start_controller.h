@@ -8,6 +8,10 @@
 #define MINIMAL_STACK_OF_TASKS_H
 
 # include <sot/core/abstract-sot-external-interface.hh>
+# include <boost/shared_ptr.hpp>
+# include <string>
+# include <map>
+#include <dynamic_graph_bridge/Vector.h>
 
 namespace dgsot=dynamicgraph::sot;
 
@@ -134,6 +138,15 @@ class MinimalStackOfTasks
   unsigned int timeIndex_;
 
   bool initialize_library_;
+
+public:
+  //TODO:
+  void setPosition(const std::vector<double> & pos);
+
+
+  std::vector<double> position_;
+//  typedef boost::shared_ptr<std_msgs::JointState> JointPtr;
+//  std::vector<JointPtr> joints_;
 };
 
 #endif // RTC_STACK_OF_TASKS_H
