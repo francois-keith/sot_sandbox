@@ -25,9 +25,6 @@ ros = Ros(robot)
 # Create a simple kinematic solver.
 from dynamic_graph.sot.dyninv import SolverKine
 
-#from dynamic_graph.sot.application.velocity.precomputed_tasks import initialize
-#solver = initialize ( robot, SolverKine )
-
 # load the initialization prototype for the pr2
 from dynamic_graph.sot.pr2.pr2_tasks import *
 solver = initialize(robot, SolverKine)
