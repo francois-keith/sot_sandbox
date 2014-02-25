@@ -40,6 +40,14 @@ robot.frames['l_gripper'] = robot.frames['leftGripper']
 robot.frames['r_gripper'] = robot.frames['rightGripper']
 robot.expressions={}
 
+taskBase = Pr2BaseTask(robot)
+gotoNd(taskBase, (0,0,0,0,0,0), '100011')
+#solver.push(taskBase.task)
+
+
+taskJL = Pr2JointLimitsTask(robot,0.005)
+
+
 ### Initialization of the Universe
 
 # define the properties of a bottle containing liquid
@@ -54,11 +62,12 @@ def createBottle():
 
 # TODO : externalize
 def estimateBottleFrame():
-  BaseElement.frames['bottle'] = ((1,0,0,0.3), (0,1,0,-0.27), (0,0,1,1), (0,0,0,1))
-#  BaseElement.frames['bottle'] = ((1,0,0,0.5), (0,1,0,-0.27), (0,0,1,0.7), (0,0,0,1))
+#   BaseElement.frames['bottle'] = ((1,0,0,0.3), (0,1,0,-0.27), (0,0,1,1), (0,0,0,1))
+# BaseElement.frames['bottle'] = ((1,0,0,0.5), (0,1,0,-0.27), (0,0,1,0.7), (0,0,0,1))
+  BaseElement.frames['bottle'] = ((0.6915113857425864, -0.7124494668300481, -0.11928017690273743, 0.6800192729933892), (0.7148927300382248, 0.6986533413730902, -0.028493738377228385, -0.27), (0.10363584286752203, -0.06556878679521648, 0.9924516846030045, 0.8319792130097555), (0.0, 0.0, 0.0, 1.0))
 
 def estimateCupFrame():
-  BaseElement.frames['cup'] = ((1,0,0,0.3), (0,1,0,0.), (0,0,1,1), (0,0,0,1))
+  BaseElement.frames['cup'] = ((1,0,0,0.7), (0,1,0,0.), (0,0,1,0.8), (0,0,0,1))
 #  BaseElement.frames['cup'] = ((1,0,0,0.5), (0,1,0,0.), (0,0,1,0.7), (0,0,0,1))
 
 # TODO...
@@ -74,6 +83,7 @@ def estimateBottleFrameInHand(robot):
 #  frame.position.recompute(bungFrame.position.time + 1)
 #  frame.jacobian.recompute(bungFrame.jacobian.time + 1)
   robot.frames['bung'] = bungFrame
+
 
 
 def initPostureTask(robot):
@@ -116,4 +126,24 @@ estimateBottleFrame()
 estimateCupFrame()
 estimateBottleFrameInHand(robot)
 
+taskRH = Pr2RightHandTask(robot)
+taskRH.feature.selec.value = '111111'
+taskRH.featureDes.position.value = BaseElement.frames['bottle']
+
+
+taskRG = MetaTaskKine6d('right-gripper',robot.dynamic,'right-wrist','right-wrist')
+taskRG.opPointModif.setTransformation(robot.dynamic.getHandParameter(True))
+taskRG.feature.frame('desired')
+taskRG.feature.selec.value = '000111'
+taskRG.featureDes.position.value = BaseElement.frames['cup']
+
+#robot.tasks[taskRH.task.name] = taskRH.task
+
+def displayError():
+  l = solver.sot.getTaskList()
+  list = l.split('|')
+  for t in list:
+    if t in robot.tasks:
+      print t, robot.tasks[t].className, robot.tasks[t].error.value
+  
 
