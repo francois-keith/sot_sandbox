@@ -45,7 +45,10 @@ gotoNd(taskBase, (0,0,0,0,0,0), '100011')
 #solver.push(taskBase.task)
 
 
+#TODO: time hard coded!
 taskJL = Pr2JointLimitsTask(robot,0.005)
+
+(taskWeight, featureWeight) = Pr2Weight(robot)
 
 
 ### Initialization of the Universe
@@ -122,10 +125,12 @@ def initPostureTask(robot):
 bottle = createBottle()
 estimateBottleFrameInHand(robot)
 
+#TODO: should be formulated using an expression graph task
 taskRH = Pr2RightHandTask(robot)
+taskRH.feature.frame('desired')
 taskRH.feature.selec.value = '111111'
 plug(BaseElement.frames['bottle'], taskRH.featureDes.position)
-
+robot.tasks['taskright-wrist'] = taskRH.task
 
 def displayError():
   l = solver.sot.getTaskList()
