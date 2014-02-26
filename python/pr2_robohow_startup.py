@@ -60,15 +60,13 @@ def createBottle():
   return cp
 
 
-# TODO : externalize
-def estimateBottleFrame():
-#   BaseElement.frames['bottle'] = ((1,0,0,0.3), (0,1,0,-0.27), (0,0,1,1), (0,0,0,1))
-# BaseElement.frames['bottle'] = ((1,0,0,0.5), (0,1,0,-0.27), (0,0,1,0.7), (0,0,0,1))
-  BaseElement.frames['bottle'] = ((0.6915113857425864, -0.7124494668300481, -0.11928017690273743, 0.6800192729933892), (0.7148927300382248, 0.6986533413730902, -0.028493738377228385, -0.27), (0.10363584286752203, -0.06556878679521648, 0.9924516846030045, 0.8319792130097555), (0.0, 0.0, 0.0, 1.0))
+# Import the cup and bottle tf from ros
+# TODO: use a method.
+ros.rosSubscribe.add('matrixHomoStamped', 'bottle', 'bottle')
+BaseElement.frames['bottle'] = ros.rosSubscribe.signal('bottle')
 
-def estimateCupFrame():
-  BaseElement.frames['cup'] = ((1,0,0,0.7), (0,1,0,0.), (0,0,1,0.8), (0,0,0,1))
-#  BaseElement.frames['cup'] = ((1,0,0,0.5), (0,1,0,0.), (0,0,1,0.7), (0,0,0,1))
+ros.rosSubscribe.add('matrixHomoStamped', 'cup', 'cup')
+BaseElement.frames['cup'] = ros.rosSubscribe.signal('cup')
 
 # TODO...
 def estimateBottleFrameInHand(robot):
@@ -122,22 +120,12 @@ def initPostureTask(robot):
 
 
 bottle = createBottle()
-estimateBottleFrame()
-estimateCupFrame()
 estimateBottleFrameInHand(robot)
 
 taskRH = Pr2RightHandTask(robot)
 taskRH.feature.selec.value = '111111'
-taskRH.featureDes.position.value = BaseElement.frames['bottle']
+plug(BaseElement.frames['bottle'], taskRH.featureDes.position)
 
-
-taskRG = MetaTaskKine6d('right-gripper',robot.dynamic,'right-wrist','right-wrist')
-taskRG.opPointModif.setTransformation(robot.dynamic.getHandParameter(True))
-taskRG.feature.frame('desired')
-taskRG.feature.selec.value = '000111'
-taskRG.featureDes.position.value = BaseElement.frames['cup']
-
-#robot.tasks[taskRH.task.name] = taskRH.task
 
 def displayError():
   l = solver.sot.getTaskList()
