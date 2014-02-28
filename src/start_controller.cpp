@@ -182,15 +182,13 @@ MinimalStackOfTasks::logTime (const timeval& t0, const timeval& t1)
     (t1.tv_sec - t0.tv_sec)
     + (t1.tv_usec - t0.tv_usec + 0.) / 1e6;
 
-//  if (timeIndex_ < timeArray_.size())
-//    timeArray_[timeIndex_++] = dt;
   logTimeFile << timeIndex_ << "   " << "   " << dt << std::endl;
   ++timeIndex_;
 }
 
 void MinimalStackOfTasks::start()
 {
-  ROS_INFO("Start the control");
+  ROS_INFO("Control started");
   started_ = true;
 }
 
@@ -258,12 +256,10 @@ bool callback(boost::shared_ptr<MinimalStackOfTasks>m, std_srvs::Empty::Request&
 //TODO: coder of the year !
 boost::shared_ptr<MinimalStackOfTasks> m;
 
-void positionCallback(const dynamic_graph_bridge::Vector & msg)
+void positionCallback(const dynamic_graph_bridge_msgs::Vector & msg)
 {
-//  ROS_INFO("I heard: [%s]", msg->data.c_str());
   if (msg.data.size() != 0)
   {
-      ROS_INFO("I heard the position : [%f]", msg.data.size());
       std::vector<double> pos (msg.data.size());
       for(unsigned i=0; i<pos.size(); ++i)
         pos[i] = msg.data[i];

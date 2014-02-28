@@ -11,7 +11,7 @@
 # include <boost/shared_ptr.hpp>
 # include <string>
 # include <map>
-#include <dynamic_graph_bridge/Vector.h>
+#include <dynamic_graph_bridge_msgs/Vector.h>
 
 namespace dgsot=dynamicgraph::sot;
 
