@@ -33,7 +33,7 @@ solver = initialize(robot, SolverKine)
 plug(solver.jointLimitator.control, ros.rosJointState.velocity)
 
 # Creates the superviser, that will handle the stack of task update
-superviser = Superviser(robot, solver, None)
+superviser = Superviser(robot, solver, ros.rosPublish)
 
 # Additional frames.
 robot.frames['l_gripper'] = robot.frames['leftGripper']
