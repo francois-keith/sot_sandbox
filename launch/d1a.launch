@@ -1,0 +1,5 @@
+<launch>
+  <node name="sot_initialization" pkg="dynamic_graph_bridge" type="run_command" 
+    args="$(find sot_sandbox)/python/pr2_robohow_startup.py"/>
+
+</launch>

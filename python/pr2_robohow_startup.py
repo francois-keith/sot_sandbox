@@ -140,3 +140,183 @@ def displayError():
       print t, robot.tasks[t].className, robot.tasks[t].error.value
   
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+index = 0
+def step():
+  global index
+  if index == 0:
+    superviser.clear()
+    superviser.push('taskcontact')
+    superviser.push('taskbase')
+    superviser.push('taskJL')
+    superviser.push('weight')
+    superviser.update()
+
+  elif index == 1:
+    print "task wrist"
+    superviser.clear()
+    superviser.push('taskcontact')
+    superviser.push('taskbase')
+    superviser.push('taskJL')
+    setTaskGoal(robot, 'taskright-wrist', (), (), '', (1.000000, ))
+    superviser.push('taskright-wrist')
+    superviser.push('weight')
+    superviser.update()
+
+  elif index == 2:
+    print "task wrist + pouting"
+    superviser.clear()
+    superviser.push('taskcontact')
+    superviser.push('taskbase')
+    superviser.push('taskJL')
+    setTaskGoal(robot, 'taskright-wrist', (), (), '', (1.000000, ))
+    superviser.push('taskright-wrist')
+    createExpression(robot, VersorElement('bung_x', robot, 'bung', versor = (1.000000, 0.000000, 0.000000)))
+    createExpression(robot, VersorElement('ground_z', robot, 'ground', versor = (0.000000, 0.000000, 1.000000)))
+    createTask(robot,'angle_pouring', 'bung_x', 'ground_z', 'angle', lowerBound = (1.570796, ), upperBound = (1.570796, ))
+    setTaskGoal(robot, 'angle_pouring', (1.570796, ), (1.570796, ), '', ())
+    superviser.push('angle_pouring')
+    superviser.push('weight')
+    superviser.update()
+
+  elif index == 3:
+    print "pouring position"
+    superviser.clear()
+    superviser.push('taskcontact')
+    superviser.push('taskbase')
+    superviser.push('taskJL')
+    createExpression(robot, VersorElement('bung_x', robot, 'bung', versor = (1.000000, 0.000000, 0.000000)))
+    createExpression(robot, VersorElement('ground_z', robot, 'ground', versor = (0.000000, 0.000000, 1.000000)))
+    createTask(robot,'angle_pouring', 'bung_x', 'ground_z', 'angle', lowerBound = (1.570796, ), upperBound = (1.570796, ))
+    setTaskGoal(robot, 'angle_pouring', (1.570796, ), (1.570796, ), '', ())
+    createExpression(robot, PointElement('bung', robot, 'bung', position = (0.000000, 0.000000, 0.000000)))
+    createExpression(robot, PointElement('cup', robot, 'cup', position = (0.000000, 0.000000, 0.000000)))
+    createTask(robot,'position_bung_Z', 'bung', 'cup', 'position', lowerBound = (0.000000, ), upperBound = (0.000000, ))
+    setTaskGoal(robot, 'position_bung_Z', (0.000000, ), (0.000000, ), '100', ())
+    superviser.push('position_bung_Z')
+    createExpression(robot, PointElement('cup', robot, 'cup', position = (0.000000, 0.000000, 0.000000)))
+    createExpression(robot, PointElement('bung', robot, 'bung', position = (0.000000, 0.000000, 0.000000)))
+    createTask(robot,'position_bung_XY', 'cup', 'bung', 'position', lowerBound = (-0.025000, -0.025000, ), upperBound = (0.025000, 0.025000, ))
+    setTaskGoal(robot, 'position_bung_XY', (-0.025000, -0.025000, ), (0.025000, 0.025000, ), '011', ())
+    superviser.push('position_bung_XY')
+    createExpression(robot, PlaneElement('ground_plane', robot, 'ground', normal = (0.000000, 0.000000, 1.000000),position = (0.000000, 0.000000, 0.000000)))
+    createExpression(robot, VersorElement('r_gripper_y', robot, 'r_gripper', versor = (0.000000, 1.000000, 0.000000)))
+    createTask(robot,'angle_gripperY_in_ground_plane', 'ground_plane', 'r_gripper_y', 'angle', lowerBound = (0.000000, ), upperBound = (0.000000, ))
+    setTaskGoal(robot, 'angle_gripperY_in_ground_plane', (0.000000, ), (0.000000, ), '', ())
+    superviser.push('angle_pouring')
+ #   superviser.push('angle_gripperY_in_ground_plane')
+    superviser.push('weight')
+    superviser.update()
+
+  elif index == 4:
+    print "pouring a little"
+    superviser.clear()
+    superviser.push('taskcontact')
+    superviser.push('taskbase')
+    superviser.push('taskJL')
+    createExpression(robot, VersorElement('bung_x', robot, 'bung', versor = (1.000000, 0.000000, 0.000000)))
+    createExpression(robot, VersorElement('ground_z', robot, 'ground', versor = (0.000000, 0.000000, 1.000000)))
+    createTask(robot,'angle_pouring', 'bung_x', 'ground_z', 'angle', lowerBound = (1.745329, ), upperBound = (1.745329, ))
+    setTaskGoal(robot, 'angle_pouring', (2, ), (2, ), '', ())
+    createExpression(robot, PointElement('bung', robot, 'bung', position = (0.000000, 0.000000, 0.000000)))
+    createExpression(robot, PointElement('cup', robot, 'cup', position = (0.000000, 0.000000, 0.000000)))
+    createTask(robot,'position_bung_Z', 'bung', 'cup', 'position', lowerBound = (0.000000, ), upperBound = (0.000000, ))
+    setTaskGoal(robot, 'position_bung_Z', (0.000000, ), (0.000000, ), '100', ())
+    superviser.push('position_bung_Z')
+    createExpression(robot, PointElement('cup', robot, 'cup', position = (0.000000, 0.000000, 0.000000)))
+    createExpression(robot, PointElement('bung', robot, 'bung', position = (0.000000, 0.000000, 0.000000)))
+    createTask(robot,'position_bung_XY', 'cup', 'bung', 'position', lowerBound = (-0.025000, -0.025000, ), upperBound = (0.025000, 0.025000, ))
+    setTaskGoal(robot, 'position_bung_XY', (-0.025000, -0.025000, ), (0.025000, 0.025000, ), '011', ())
+    superviser.push('position_bung_XY')
+    createExpression(robot, PlaneElement('ground_plane', robot, 'ground', normal = (0.000000, 0.000000, 1.000000),position = (0.000000, 0.000000, 0.000000)))
+    createExpression(robot, VersorElement('r_gripper_y', robot, 'r_gripper', versor = (0.000000, 1.000000, 0.000000)))
+    createTask(robot,'angle_gripperY_in_ground_plane', 'ground_plane', 'r_gripper_y', 'angle', lowerBound = (0.000000, ), upperBound = (0.000000, ))
+    setTaskGoal(robot, 'angle_gripperY_in_ground_plane', (0.000000, ), (0.000000, ), '', ())
+    superviser.push('angle_gripperY_in_ground_plane')
+    superviser.push('angle_pouring')
+    superviser.push('weight')
+    superviser.update()
+
+  elif index == 5:
+    print "pouring MORE"
+    superviser.clear()
+    superviser.push('taskcontact')
+    superviser.push('taskbase')
+    superviser.push('taskJL')
+    createExpression(robot, VersorElement('bung_x', robot, 'bung', versor = (1.000000, 0.000000, 0.000000)))
+    createExpression(robot, VersorElement('ground_z', robot, 'ground', versor = (0.000000, 0.000000, 1.000000)))
+    createTask(robot,'angle_pouring', 'bung_x', 'ground_z', 'angle', lowerBound = (2.007129, ), upperBound = (2.007129, ))
+    setTaskGoal(robot, 'angle_pouring', (2.4, ), (2.4, ), '', ())
+    createExpression(robot, PointElement('bung', robot, 'bung', position = (0.000000, 0.000000, 0.000000)))
+    createExpression(robot, PointElement('cup', robot, 'cup', position = (0.000000, 0.000000, 0.000000)))
+    createTask(robot,'position_bung_Z', 'bung', 'cup', 'position', lowerBound = (0.000000, ), upperBound = (0.000000, ))
+    setTaskGoal(robot, 'position_bung_Z', (0.0750000, ), (0.07500000, ), '100', ())
+    superviser.push('position_bung_Z')
+    createExpression(robot, PointElement('cup', robot, 'cup', position = (0.000000, 0.000000, 0.000000)))
+    createExpression(robot, PointElement('bung', robot, 'bung', position = (0.000000, 0.000000, 0.000000)))
+    createTask(robot,'position_bung_XY', 'cup', 'bung', 'position', lowerBound = (-0.025000, -0.025000, ), upperBound = (0.025000, 0.025000, ))
+    setTaskGoal(robot, 'position_bung_XY', (-0.025000, -0.025000, ), (0.025000, 0.025000, ), '011', ())
+    superviser.push('position_bung_XY')
+    createExpression(robot, PlaneElement('ground_plane', robot, 'ground', normal = (0.000000, 0.000000, 1.000000),position = (0.000000, 0.000000, 0.000000)))
+    createExpression(robot, VersorElement('r_gripper_y', robot, 'r_gripper', versor = (0.000000, 1.000000, 0.000000)))
+    createTask(robot,'angle_gripperY_in_ground_plane', 'ground_plane', 'r_gripper_y', 'angle', lowerBound = (0.000000, ), upperBound = (0.000000, ))
+    setTaskGoal(robot, 'angle_gripperY_in_ground_plane', (0.000000, ), (0.000000, ), '', ())
+    superviser.push('angle_pouring')
+#    superviser.push('angle_gripperY_in_ground_plane')
+    superviser.push('weight')
+    superviser.update()
+
+
+  elif index == 6:
+    print "go away"
+
+#    superviser.clear()
+#    setTaskGoal(robot, 'angle_pouring', (1.483530, ), (1.483530, ), '', ())
+#    superviser.push('taskcontact')
+#    superviser.push('taskbase')
+#    superviser.push('taskJL')
+#    createExpression(robot, VersorElement('bung_x', robot, 'bung', versor = (1.000000, 0.000000, 0.000000)))
+#    createExpression(robot, VersorElement('ground_z', robot, 'ground', versor = (0.000000, 0.000000, 1.000000)))
+#    createTask(robot,'angle_pouring', 'bung_x', 'ground_z', 'angle', lowerBound = (1.483530, ), upperBound = (1.483530, ))
+#    setTaskGoal(robot, 'angle_pouring', (1.483530, ), (1.483530, ), '', ())
+#    superviser.push('angle_pouring')
+#    createExpression(robot, PlaneElement('ground_plane', robot, 'ground', normal = (0.000000, 0.000000, 1.000000),position = (0.000000, 0.000000, 0.000000)))
+#    createExpression(robot, VersorElement('r_gripper_y', robot, 'r_gripper', versor = (0.000000, 1.000000, 0.000000)))
+#    createTask(robot,'angle_gripperY_in_ground_plane', 'ground_plane', 'r_gripper_y', 'angle', lowerBound = (0.000000, ), upperBound = (0.000000, ))
+#    setTaskGoal(robot, 'angle_gripperY_in_ground_plane', (0.000000, ), (0.000000, ), '', ())
+#    superviser.push('angle_gripperY_in_ground_plane')
+#    superviser.push('weight')
+#    superviser.update()
+
+
+#  elif index == 7:
+    superviser.clear()
+    superviser.push('taskcontact')
+    superviser.push('taskbase')
+    superviser.push('taskJL')
+    setTaskGoal(robot, 'taskright-wrist', (), (), '', (0.2, ))
+    superviser.push('taskright-wrist')
+    superviser.push('weight')
+    superviser.update()
+
+  elif index == 8:
+    index = -1
+
+  index = index + 1
+
