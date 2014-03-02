@@ -1,0 +1,4 @@
+<!-- parameterization file for the romeo robot -->
+<launch>
+  <include file="$(find romeo_description)/launch/sot_display.launch" />
+</launch>

@@ -1,0 +1,4 @@
+<!-- parameterization file for the hpr4 robot -->
+<launch>
+  <include file="$(find hrp4_description)/launch/sot_display.launch" />
+</launch>

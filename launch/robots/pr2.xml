@@ -1,0 +1,4 @@
+<!-- parameterization file for the pr2 robot -->
+<launch>
+  <include file="$(find sot_pr2)/launch/display.launch" />
+</launch>

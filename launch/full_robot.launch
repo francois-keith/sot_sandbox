@@ -1,15 +1,17 @@
 <launch>
-  <!-- TODO  add the name of the script in argument -->
-  <param name="robot" type="string" value="PR2" />
+	<arg name="my_robot"/>
+	<param name="robot" value="$(arg my_robot)" />
+	<arg name="simulation" default="false" />
+
   <!-- TODO: better handling of the robot parameterization -->
-  <include file="$(find sot_pr2)/launch/display.launch" />
+  <include file="$(find sot_sandbox)/launch/robots/$(arg my_robot).xml" />
   <include file="$(find sot_sandbox)/launch/controller.launch" />
 <!--
   <node name="sot_initialization" pkg="dynamic_graph_bridge" type="run_command" 
     args="$(find sot_sandbox)/python/pr2_test.py"/>
 -->
   <node name="sot_initialization" pkg="dynamic_graph_bridge" type="run_command" 
-    args="$(find sot_sandbox)/python/pr2_robohow_startup.py"/>
+    args="$(find sot_sandbox)/python/$(arg my_robot)_robohow_startup.py"/>
 <!--
   <include file="$(find constraint2sot)/launch/sot.launch" />
   <include file="$(find constraint2sot)/launch/dummy_cram.launch" />
