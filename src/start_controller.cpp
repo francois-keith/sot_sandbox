@@ -51,8 +51,8 @@ DebugFile << x << std::endl; \
 
 MinimalStackOfTasks::MinimalStackOfTasks()
     // <rtc-template block="initializer">
-  : initialize_library_(false)
-  , started_(false)
+  : started_(false)
+  , initialize_library_(false)
     // </rtc-template>
 {
   RESETDEBUG5()
@@ -84,31 +84,6 @@ void MinimalStackOfTasks::setRobot(ROBOT robot)
 
 std::string filename ("/tmp/rtc-log-time.txt");
 std::ofstream logTimeFile (filename.c_str());
-
-//void MinimalStackOfTasks::saveLog() const
-//{
-////  std::string filename ("/tmp/rtc-log-time.txt");
-////  std::ofstream logTime (filename.c_str());
-////  if(logTime.is_open())
-////  {
-////    for(unsigned i=0;i<std::min<unsigned>(timeIndex_, timeArray_.size()); ++i)
-////      logTime << i << "   " << "   " << timeArray_[i] << std::endl;
-////    logTime.close();
-////  }
-////  else
-////  {
-////    ODEBUG5("Unable to open '" << filename <<"' to save the log'");
-////  }
-//}
-
-void MinimalStackOfTasks::readConfig()
-{
-//  robot_config_.libname="libsot-hrp4-controller.so";
-// robot_config_.libname="libsot_pr2.so";
-//  ODEBUG5("The library to be loaded: " << robot_config_.libname) ;
-//  ODEBUG5("Nb dofs:" << robot_config_.nb_dofs);
-//  ODEBUG5("Nb force sensors:" << robot_config_.nb_force_sensors);
-}
 
 void MinimalStackOfTasks::LoadSot()
 {
@@ -196,7 +171,6 @@ void MinimalStackOfTasks::onInitialize()
 {
   if (!initialize_library_)
   {
-    readConfig();
     LoadSot();
     initialize_library_ = true;
   }
@@ -222,7 +196,6 @@ void MinimalStackOfTasks::onExecute()
   if (!started_)
     return;
 
-  //
   // Log control loop start time.
   captureTime (t0_);
   
@@ -235,9 +208,6 @@ void MinimalStackOfTasks::onExecute()
     }
   catch (std::exception &e)
     {  ODEBUG5("Exception on Execute: " << e.what());throw e; }
-//  ODEBUG("Before reading control");
-//  readControl(controlValues_);
-//  ODEBUG("After reading control");
 
   // Log control loop end time and compute time spent.
   captureTime (t1_);

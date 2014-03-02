@@ -98,9 +98,6 @@ class MinimalStackOfTasks
   /// \brief From rotation to RPY
   void fromRotationToRpy(double *R, RpyVector &aRpyVector);
 
-  /// \brief Read config variables
-  void readConfig();
-
   /// \brief the sot-hrp2 controller
   dgsot::AbstractSotExternalInterface * m_sotController;
 
@@ -143,10 +140,7 @@ public:
   //TODO:
   void setPosition(const std::vector<double> & pos);
 
-
   std::vector<double> position_;
-//  typedef boost::shared_ptr<std_msgs::JointState> JointPtr;
-//  std::vector<JointPtr> joints_;
 };
 
 #endif // RTC_STACK_OF_TASKS_H
