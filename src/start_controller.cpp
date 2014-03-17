@@ -267,12 +267,12 @@ int main (int argc, char** argv)
   else if (robot == "hrp4")
   {
     m->setRobot(HRP4);
-    frequency = 1000;
+    frequency = 200;
   }
   else if (robot == "romeo")
   {
     m->setRobot(ROMEO);
-    frequency = 1000;
+    frequency = 200;
   }
   else
     ROS_ERROR("Robot not handled");
