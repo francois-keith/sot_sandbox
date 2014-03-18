@@ -1,0 +1,4 @@
+<launch>
+  <include file="$(find robohow_sot)/launch/sot.launch" />
+  <include file="$(find robohow_sot)/launch/dummy_cram.launch" />
+</launch>

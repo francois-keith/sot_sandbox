@@ -1,0 +1,6 @@
+<launch>
+  <node name="featureDisplayer" pkg="feature_constraints_utils" type="feature_viz.py"/>
+  <node name="errorDisplayer" pkg="rqt_plot" type="rqt_plot" 
+    args="/sot/position_gripper_bottle_error_norm/data /sot/angle_gripperY_in_ground_plane_error_norm/data  /sot/angle_pouring_error_norm/data /sot/position_bung_XY_error_norm/data  /sot/position_bung_Z_error_norm/data"
+  />
+</launch>

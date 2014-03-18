@@ -1,0 +1,6 @@
+<launch>
+  <!-- TODO  add the name of the script in argument -->
+  <param name="robot" type="string" value="PR2" />
+  <!-- TODO: better handling of the robot parameterization -->
+  <include file="$(find sot_pr2)/launch/display.launch" />
+</launch>
