@@ -1,0 +1,21 @@
+<launch>
+  <!-- rviz feature displayer-->
+  <node name="featureDisplayer" pkg="feature_constraints_utils" type="feature_viz.py"/>
+
+  <!-- rqt_plot display of the error. Since the list of topics changes during the manipulation, it is required to "declare" the topics by publishing them before calling error Displayer 
+  -->
+  <param name="names" value="/sot/position_gripper_bottle_error_norm /sot/angle_gripperY_in_ground_plane_error_norm /sot/angle_pouring_error_norm /sot/position_bung_XY_error_norm /sot/position_bung_Z_error_norm /sot/taskright_wrist_error_norm"/>
+
+  <node name="declare_time" 
+    pkg="rostopic" type="rostopic"
+    args="pub /rqt_time/time  std_msgs/Float64 'data: 0' -r 200 "/>
+
+  <node name="declare_topics" pkg="sot_sandbox" type="declare_topic.py"/>
+
+  <node name="errorDisplayer" pkg="rqt_plot" type="rqt_plot" 
+    args="/sot/position_gripper_bottle_error_norm/data /sot/angle_gripperY_in_ground_plane_error_norm/data  /sot/angle_pouring_error_norm/data /sot/position_bung_XY_error_norm/data  /sot/position_bung_Z_error_norm/data /sot/taskright_wrist_error_norm/data"
+  />
+
+  <!-- display the sot state in a web page -->
+  <include file="$(find webint)/launch/webint.launch" />
+</launch>

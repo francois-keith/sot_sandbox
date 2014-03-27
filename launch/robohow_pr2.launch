@@ -15,4 +15,8 @@
 
   <include file="$(find robohow_sot)/launch/sot.launch" />
   <include file="$(find robohow_sot)/launch/dummy_cram.launch" />
+
+  <!-- display plenty of things -->
+  <include file="$(find sot_sandbox)/launch/displayer.launch" />
+
 </launch>
