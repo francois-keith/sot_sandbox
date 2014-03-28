@@ -11,6 +11,9 @@
   <url>...</url>
   <depend package="roscpp"/>
   <depend package="std_srvs"/>
+
+  <!-- for the display / execution -->
+  <depend package="webint"/>
 </package>
 
 
