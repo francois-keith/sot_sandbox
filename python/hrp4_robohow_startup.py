@@ -55,14 +55,17 @@ def createBottle():
   return cp
 
 
-# TODO : externalize
-def estimateBottleFrame():
-  BaseElement.frames['bottle'] = ((1,0,0,0.3), (0,1,0,-0.27), (0,0,1,1), (0,0,0,1))
-#  BaseElement.frames['bottle'] = ((1,0,0,0.5), (0,1,0,-0.27), (0,0,1,0.7), (0,0,0,1))
+# Import the cup and bottle tf from ros
+# TODO: use a method.
+ros.rosSubscribe.add('matrixHomoStamped', 'table', 'table')
+BaseElement.frames['table'] = ros.rosSubscribe.signal('table')
 
-def estimateCupFrame():
-  BaseElement.frames['cup'] = ((1,0,0,0.3), (0,1,0,0.), (0,0,1,1), (0,0,0,1))
-#  BaseElement.frames['cup'] = ((1,0,0,0.5), (0,1,0,0.), (0,0,1,0.7), (0,0,0,1))
+ros.rosSubscribe.add('matrixHomoStamped', 'bottle', 'bottle')
+BaseElement.frames['bottle'] = ros.rosSubscribe.signal('bottle')
+
+ros.rosSubscribe.add('matrixHomoStamped', 'cup', 'cup')
+BaseElement.frames['cup'] = ros.rosSubscribe.signal('cup')
+
 
 # TODO...
 def estimateBottleFrameInHand(robot):
@@ -71,12 +74,24 @@ def estimateBottleFrameInHand(robot):
   # of the bottle.
   bungFrame = OpPointModifier('bung')
   #TODO find the correct Z, position of the bung in the frame of the hand
-  bungFrame.setTransformation(((1,0,0,0.0), (0,1,0,0.0), (0,0,1,0.10), (0,0,0,1)))
+  bungFrame.setTransformation(((1,0,0,0.0), (0,1,0,0.0), (0,0,1, 0.10), (0,0,0,1)))
   plug(robot.frames['rightGripper'].position, bungFrame.positionIN)
   plug(robot.frames['rightGripper'].jacobian, bungFrame.jacobianIN)
 #  frame.position.recompute(bungFrame.position.time + 1)
 #  frame.jacobian.recompute(bungFrame.jacobian.time + 1)
   robot.frames['bung'] = bungFrame
+
+
+def estimateCupFrameInHand(robot):
+  # consider the difference of position between the bottle and the hand.
+  # starting from that, define the robot (frame) corresponding to the top
+  # of the bottle.
+  topcupFrame = OpPointModifier('topcup')
+  #TODO find the correct Z, position of the topcup in the frame of the hand
+  topcupFrame.setTransformation(((1,0,0,0.0), (0,1,0,0.0), (0,0,1,-0.10), (0,0,0,1)))
+  plug(robot.frames['leftGripper'].position, topcupFrame.positionIN)
+  plug(robot.frames['leftGripper'].jacobian, topcupFrame.jacobianIN)
+  robot.frames['topcup'] = topcupFrame
 
 
 def initPostureTask(robot):
@@ -114,9 +129,70 @@ def initPostureTask(robot):
   plug(gainPosition.gain,robot.tasks['robot_task_position'].controlGain)
 
 
-bottle = createBottle()
-estimateBottleFrame()
-estimateCupFrame()
-estimateBottleFrameInHand(robot)
 
+def initChestHeadTask(robot):
+  # --- TASK POSTURE --------------------------------------------------
+  # set a default position for the joints. 
+  robot.features['featurechest_head'] = FeaturePosture('featurechest_head')
+  plug(robot.device.state,robot.features['featurechest_head'].state)
+  robotDim = len(robot.dynamic.velocity.value)
+  robot.features['featurechest_head'].posture.value = robot.halfSitting
+  if robot.device.name == 'HRP2LAAS' or \
+     robot.device.name == 'HRP2JRL':
+    postureTaskDofs = [ False,False,False,False,False,False, \
+                        False,False,False,False,False,False, \
+                        True,True,True,True, \
+                        False,False,False,False,False,False,False, \
+                        False,False,False,False,False,False,False ]
+  elif robot.device.name == 'HRP4LIRMM':
+    # Right Leg, Left leg, chest, right arm, left arm
+    postureTaskDofs = [False]*6 +  [False]*6 + [True]*4 + [False]*9 + [False]*9
+  elif robot.device.name == 'ROMEO':
+    # chest, left/right arms, left/right legs
+    postureTaskDofs = [False]*5 + [False]*7 + [True]*7 + [False]*7 + [False]*7
+  else:
+    print "/!\\ walking.py: The robot " +robot.device.name+ " is unknown."
+    print "  Default posture task froze all the dofs"
+    postureTaskDofs=[True] * (robot.dimension-6)
+  for dof,isEnabled in enumerate(postureTaskDofs):
+    robot.features['featurechest_head'].selectDof(dof+6,isEnabled)
+  robot.tasks['chest_head']=Task('chest_head')
+  robot.tasks['chest_head'].add('featurechest_head')
+  gainchest_head = GainAdaptive('gainchest_head')
+  gainchest_head.set(0.1,0.1,125e3)
+  gainchest_head.gain.value = 5
+  plug(robot.tasks['robot_task_position'].error,gainchest_head.error)
+  plug(gainchest_head.gain,robot.tasks['robot_task_position'].controlGain)
+
+
+
+bottle = createBottle()
+estimateBottleFrameInHand(robot)
+estimateCupFrameInHand(robot)
+
+
+#TODO: PLEASE !!
+#TODO: should be formulated using an expression graph task
+taskLH = MetaTaskKine6d('left-wrist',robot.dynamic,'left-wrist','left-wrist')
+taskLH.feature.selec.value = '000111'
+taskLH.feature.frame('desired')
+plug(BaseElement.frames['cup'], taskLH.featureDes.position)
+robot.tasks['taskleft-wrist'] = taskLH.task
+
+
+#TODO: PLEASE !!
+#TODO: should be formulated using an expression graph task
+taskRH = MetaTaskKine6d('right-wrist',robot.dynamic,'right-wrist','right-wrist')
+taskRH.feature.selec.value = '000111'
+taskRH.feature.frame('desired')
+plug(BaseElement.frames['bottle'], taskRH.featureDes.position)
+robot.tasks['taskright-wrist'] = taskRH.task
+
+def displayError():
+  l = solver.sot.getTaskList()
+  list = l.split('|')
+  for t in list:
+    if t in robot.tasks:
+      print t, robot.tasks[t].className, robot.tasks[t].error.value
+  
 
