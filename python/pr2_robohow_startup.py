@@ -44,10 +44,13 @@ taskBase = Pr2BaseTask(robot)
 gotoNd(taskBase, (0,0,0,0,0,0), '100011')
 #solver.push(taskBase.task)
 
+#taskChest = Pr2ChestTask(robot)
+#taskChest.feature.selec.value = '000100'
+#taskChest.featureDes.position.value  = array([[1.0,0.0,0.0,0.0],[0,1,0.0,0.0],[0.0,0.,1.0,0.0],[0.0,0.0,0.85,1.0]])
+
 
 #TODO: time hard coded!
 taskJL = Pr2JointLimitsTask(robot,0.005)
-
 (taskWeight, featureWeight) = Pr2Weight(robot)
 
 
@@ -86,44 +89,53 @@ def estimateBottleFrameInHand(robot):
   robot.frames['bung'] = bungFrame
 
 
+def initChestTask(robot):
+  name = "chest"
+  dim = 1
+  index = 18
+  feature = FeatureGeneric('feature_'+name)
+  featureDes = FeatureGeneric('featureDes_'+name)
+  featureDes.errorIN.value=(0.2,)
+  feature.setReference('featureDes_'+name)
+  featureDes.errorIN.value = (0,) * dim;
+  robot.features[name] = feature 
+  robot.features['Des'+name] = feature 
 
-def initPostureTask(robot):
-  # --- TASK POSTURE --------------------------------------------------
-  # set a default position for the joints. 
-  robot.features['featurePosition'] = FeaturePosture('featurePosition')
-  plug(robot.device.state,robot.features['featurePosition'].state)
-  robotDim = len(robot.dynamic.velocity.value)
-  robot.features['featurePosition'].posture.value = robot.halfSitting
-  if robot.device.name == 'HRP2LAAS' or \
-     robot.device.name == 'HRP2JRL':
-    postureTaskDofs = [ False,False,False,False,False,False, \
-                        False,False,False,False,False,False, \
-                        True,True,True,True, \
-                        True,True,True,True,True,True,True, \
-                        True,True,True,True,True,True,True ]
-  elif robot.device.name == 'HRP4LIRMM':
-    # Right Leg, Left leg, chest, right arm, left arm
-    postureTaskDofs = [False]*6 +  [False]*6 + [True]*4 + [True]*9 + [True]*9
-  elif robot.device.name == 'ROMEO':
-    # chest, left/right arms, left/right legs
-    postureTaskDofs = [True]*5 + [True]*7 + [True]*7 + [False]*7 + [False]*7
-  else:
-    print "/!\\ walking.py: The robot " +robot.device.name+ " is unknown."
-    print "  Default posture task froze all the dofs"
-    postureTaskDofs=[True] * (robot.dimension-6)
-  for dof,isEnabled in enumerate(postureTaskDofs):
-    robot.features['featurePosition'].selectDof(dof+6,isEnabled)
-  robot.tasks['robot_task_position']=Task('robot_task_position')
-  robot.tasks['robot_task_position'].add('featurePosition')
-  gainPosition = GainAdaptive('gainPosition')
-  gainPosition.set(0.1,0.1,125e3)
-  gainPosition.gain.value = 5
-  plug(robot.tasks['robot_task_position'].error,gainPosition.error)
-  plug(gainPosition.gain,robot.tasks['robot_task_position'].controlGain)
+  # create jacobian.
+  jacobianGripper = eye(dim,robot.dimension) * 0;
+  jacobianGripper[0][index] = 1;
+  feature.jacobianIN.value = jacobianGripper
+
+  # only selec some dofs
+  selecFeatureChest = Selec_of_vector('selecfeature_'+name)
+  selecFeatureChest.selec(index, index+dim)
+  plug(robot.dynamic.position, selecFeatureChest.sin)
+  plug(selecFeatureChest.sout, feature.errorIN)
+
+  # 2\ Define the task. Associate to the task the position feature.
+  task = Task('task_'+name)
+  task.add('feature_'+name)
+  task.controlGain.value = 1
+  robot.tasks[name] = task
+
 
 
 bottle = createBottle()
 estimateBottleFrameInHand(robot)
+
+# define the posture task.
+def testJoint(robot, index, angle):
+  currentState = robot.dynamic.position.value
+  #state(index) = angle
+  posture = currentState[0:index] + (angle,) + currentState[index+1: len(robot.halfSitting)]
+  robot.features['featurePosition'].posture.value = posture
+  robot.features['featurePosition'].selec.value = '0' * index + '1' + '0' * (len(robot.halfSitting) - index-1)
+
+initPostureTask(robot)
+testJoint(robot, 18, 0.2)
+
+#initChestTask(robot)
+
 
 #TODO: should be formulated using an expression graph task
 taskRH = Pr2RightHandTask(robot)
