@@ -1,4 +1,16 @@
 <!-- parameterization file for the hpr4 robot -->
 <launch>
   <include file="$(find hrp4_description)/launch/sot_display.launch" />
+
+  <!-- the bottle is on the table 0.72 cm + 0.7 cm to aim the center of the bottle -->
+  <node name="tf_bottle" pkg="tf"
+        type="static_transform_publisher"
+        args="0.3 -0.27 0.79   0.80  -0.10  -0.066 /odom /bottle 100"/>
+
+  <!-- the cup -->
+  <node name="tf_cup" pkg="tf"
+        type="static_transform_publisher"
+        args="0.3 0 0.9  0 0 0 1 /odom /cup 100"/>
+
+
 </launch>

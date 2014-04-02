@@ -1,4 +1,16 @@
 <!-- parameterization file for the pr2 robot -->
 <launch>
   <include file="$(find sot_pr2)/launch/display.launch" />
+
+  <!-- the bottle is on the table 0.72 cm + 0.7 cm to aim the center of the bottle -->
+  <node name="tf_bottle" pkg="tf"
+        type="static_transform_publisher"
+        args="0.6 -0.27 0.9   0.80  -0.10  -0.066 /odom /bottle 100"/>
+
+  <!-- the cup -->
+  <node name="tf_cup" pkg="tf"
+        type="static_transform_publisher"
+        args="0.6 0 0.8  0 0 0 1 /odom /cup 100"/>
+
+
 </launch>
