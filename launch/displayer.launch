@@ -17,5 +17,5 @@
   />
 
   <!-- display the sot state in a web page -->
-  <include file="$(find webint)/launch/webint.launch" />
+  <include file="$(find webint)/launch/webint_holder.launch" />
 </launch>
