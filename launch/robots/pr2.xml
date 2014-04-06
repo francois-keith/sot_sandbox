@@ -1,6 +1,14 @@
 <!-- parameterization file for the pr2 robot -->
 <launch>
-  <include file="$(find sot_pr2)/launch/display.launch" />
+  <arg name="kinematics"/>
+  <!-- if we are in pure kinematic, use the sot joint state for publication -->
+  <group if="$(arg kinematics)">
+    <include file="$(find sot_pr2)/launch/display.launch" />
+  </group>
+  <!-- otherwise use gazebo's joint state for publication -->
+  <group unless="$(arg kinematics)">
+    <include file="$(find sot_pr2)/launch/display.launch" />
+  </group>
 
   <!-- the bottle is on the table 0.72 cm + 0.7 cm to aim the center of the bottle -->
   <node name="tf_bottle" pkg="tf"
@@ -10,7 +18,7 @@
   <!-- the cup -->
   <node name="tf_cup" pkg="tf"
         type="static_transform_publisher"
-        args="0.6 0 0.8  0 0 0 1 /odom /cup 100"/>
+        args="0.534  0.000  0.746  0 0 0 1 /odom /cup 100"/>
 
 
 </launch>

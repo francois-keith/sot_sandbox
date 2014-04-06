@@ -82,8 +82,8 @@ def estimateBottleFrameInHand(robot):
   bungFrame = OpPointModifier('bung')
   #TODO find the correct Z, position of the bung in the frame of the hand
   bungFrame.setTransformation(((1,0,0,0.0), (0,1,0,0.0), (0,0,1,0.10), (0,0,0,1)))
-  plug(robot.frames['rightGripper'].position, bungFrame.positionIN)
-  plug(robot.frames['rightGripper'].jacobian, bungFrame.jacobianIN)
+  plug(robot.frames['leftGripper'].position, bungFrame.positionIN)
+  plug(robot.frames['leftGripper'].jacobian, bungFrame.jacobianIN)
 #  frame.position.recompute(bungFrame.position.time + 1)
 #  frame.jacobian.recompute(bungFrame.jacobian.time + 1)
   robot.frames['bung'] = bungFrame
@@ -127,9 +127,20 @@ estimateBottleFrameInHand(robot)
 def testJoint(robot, index, angle):
   currentState = robot.dynamic.position.value
   #state(index) = angle
-  posture = currentState[0:index] + (angle,) + currentState[index+1: len(robot.halfSitting)]
+#  posture = currentState[0:index] + (angle,) + currentState[index+1: len(robot.halfSitting)]
+  posture = (0,)* 18  + \
+    (0.31, 0, 1.05) +\
+    (1.0650093105988152,     0.26376743371555295,     1.392565491097796,    -1.629946646305397,       0.524,     -0.9668414952685922,  -1.8614) +\
+    (0,)* 6 +\
+    (0.04,) +  \
+    (0,) +\
+    ( -1.265335905500992,     1.2666995326579538,     -1.9643297630604963,     -0.2625872772879775,     5.81991983730232,     -0.13242260444085052,     2.64) +\
+    (0,)* 8
   robot.features['featurePosition'].posture.value = posture
-  robot.features['featurePosition'].selec.value = '0' * index + '1' + '0' * (len(robot.halfSitting) - index-1)
+  robot.features['featurePosition'].selec.value = '0'*18 + '1' + '0' + '1'*8 + '0'*6 + '10' + '1'*7+ '0'*8
+
+#  robot.features['featurePosition'].posture.value = posture
+#  robot.features['featurePosition'].selec.value = '0' * index + '1' + '0' * (len(robot.halfSitting) - index-1)
 
 initPostureTask(robot)
 testJoint(robot, 18, 0.2)
@@ -138,11 +149,11 @@ testJoint(robot, 18, 0.2)
 
 
 #TODO: should be formulated using an expression graph task
-taskRH = Pr2RightHandTask(robot)
-taskRH.feature.frame('desired')
-taskRH.feature.selec.value = '111111'
-plug(BaseElement.frames['bottle'], taskRH.featureDes.position)
-robot.tasks['taskright-wrist'] = taskRH.task
+taskLH = Pr2LeftHandTask(robot)
+taskLH.feature.frame('desired')
+taskLH.feature.selec.value = '000111'
+plug(BaseElement.frames['bottle'], taskLH.featureDes.position)
+robot.tasks['taskleft-wrist'] = taskLH.task
 
 def displayError():
   l = solver.sot.getTaskList()
@@ -151,4 +162,11 @@ def displayError():
     if t in robot.tasks:
       print t, robot.tasks[t].className, robot.tasks[t].error.value
   
+#robot.tasks['robot_task_position'].controlGain.set(1,1, 0.1)
+gainPosition = GainAdaptive('gainPosition') 
+plug(robot.tasks['robot_task_position'].error,gainPosition.error)
+plug(gainPosition.gain,robot.tasks['robot_task_position'].controlGain)
+
+
+gainPosition.set(0.1,0.1,125e3)
 

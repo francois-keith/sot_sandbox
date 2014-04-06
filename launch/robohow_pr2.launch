@@ -8,7 +8,9 @@
   <param name="kinematics" value="$(arg kinematics)" />
 
   <!--  -->
-  <include file="$(find sot_sandbox)/launch/robots/$(arg my_robot).xml" />
+  <include file="$(find sot_sandbox)/launch/robots/$(arg my_robot).xml">
+    <arg name="kinematics" value="$(arg kinematics)" />
+  </include>
   <include file="$(find sot_sandbox)/launch/controller.launch" />
 
   <!-- initialize sot environment -->
