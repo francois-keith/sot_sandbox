@@ -168,5 +168,5 @@ plug(robot.tasks['robot_task_position'].error,gainPosition.error)
 plug(gainPosition.gain,robot.tasks['robot_task_position'].controlGain)
 
 
-gainPosition.set(0.1,0.1,125e3)
+gainPosition.set(0.1,0.1,1e3)
 
