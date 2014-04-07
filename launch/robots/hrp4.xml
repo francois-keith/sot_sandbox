@@ -1,5 +1,7 @@
 <!-- parameterization file for the hpr4 robot -->
 <launch>
+  <arg name="kinematics"/>
+
   <include file="$(find hrp4_description)/launch/sot_display.launch" />
 
   <!-- the bottle is on the table 0.72 cm + 0.7 cm to aim the center of the bottle -->
