@@ -164,6 +164,40 @@ def initChestHeadTask(robot):
   plug(robot.tasks['robot_task_position'].error,gainchest_head.error)
   plug(gainchest_head.gain,robot.tasks['robot_task_position'].controlGain)
 
+initPostureTask(robot)
+
+
+#########################################################
+
+# --- JOINT LIMITS TASK
+# set a default position for the joints. 
+robot.features['feature_jl'] = FeaturePosture('feature_jl')
+plug(robot.device.state,robot.features['feature_jl'].state)
+robotDim = len(robot.dynamic.velocity.value)
+robot.features['feature_jl'].posture.value = robot.halfSitting
+
+# Right Leg, Left leg, chest+neck, right arm, left arm
+postureTaskDofs = \
+	  [False]*3 + [False]*3 + [False]*3 + [False]*3 \
+	+ [True] *1 + [False]*3 \
+	+ [False]*1 + [True] *1 + [False]*5 + [False]*2 \
+	+ [False]*1 + [True] *1 + [False]*5 + [False]*2 
+
+for dof,isEnabled in enumerate(postureTaskDofs):
+	robot.features['feature_jl'].selectDof(dof+6,isEnabled)
+  
+taskJointLimit=TaskInequality('taskJL')
+taskJointLimit.add('feature_jl')
+
+# Limits on these joints: Shoulder Roll, Thumb, Fingers (Left and Right) 
+#taskJointLimit.referenceInf.value = (r_hip_yaw, r_hip_roll, r_hip_pitch, l_hip_yaw, l_hip_roll, l_hip_pitch, -1.55 ,1.57, 1.57,-0.005, -1.57,-1.57) 
+#taskJointLimit.referenceSup.value = (r_hip_yaw, r_hip_roll, r_hip_pitch, l_hip_yaw, l_hip_roll, l_hip_pitch,  0.005,1.57, 1.57, 1.55 , -1.57,-1.57) 
+taskJointLimit.referenceInf.value = (0.00,-1.550,-0.005) 
+taskJointLimit.referenceSup.value = (0.10, 0.005, 1.550) 
+taskJointLimit.dt.value= 0.005
+taskJointLimit.controlGain.value = 0.009
+
+#########################################################
 
 
 bottle = createBottle()
@@ -188,11 +222,21 @@ taskRH.feature.frame('desired')
 plug(BaseElement.frames['bottle'], taskRH.featureDes.position)
 robot.tasks['taskright-wrist'] = taskRH.task
 
-def displayError():
-  l = solver.sot.getTaskList()
-  list = l.split('|')
-  for t in list:
-    if t in robot.tasks:
-      print t, robot.tasks[t].className, robot.tasks[t].error.value
-  
+
+r_gripper_opening = Gripper('r_gripper_opening', robot)
+robot.tasks['r_gripper_opening'] = r_gripper_opening.task
+robot.features['r_gripper_opening'] = r_gripper_opening.feature
+
+# --- KEEP FIX the WAIST
+taskWAIST=MetaTaskKine6d('waist',robot.dynamic,'waist','waist')
+taskWAIST.gain.set(2,0.1,0.1)
+taskWAIST.feature.frame('desired')
+taskWAIST.featureDes.position.value = robot.waist.position.value
+
+def close1():
+  r_gripper_opening.featureDes.errorIN.value =(1,0)
+
+def close2():
+  r_gripper_opening.featureDes.errorIN.value =(1,0.47)
+
 
