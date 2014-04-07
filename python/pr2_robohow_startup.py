@@ -170,3 +170,4 @@ plug(gainPosition.gain,robot.tasks['robot_task_position'].controlGain)
 
 gainPosition.set(0.1,0.1,1e3)
 
+robot.tasks['robot_task_position'].controlGain.value = 1
