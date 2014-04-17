@@ -18,7 +18,9 @@
     args="$(find sot_sandbox)/python/$(arg my_robot)_robohow_startup.py"/>
 
   <include file="$(find robohow_sot)/launch/sot.launch" />
-  <include file="$(find robohow_sot)/launch/dummy_cram.launch" />
+  <include file="$(find robohow_sot)/launch/dummy_cram.launch">
+    <arg name="robot" value="$(arg my_robot)" />
+  </include>
 
   <!-- display plenty of things -->
   <include file="$(find sot_sandbox)/launch/displayer.launch" />
