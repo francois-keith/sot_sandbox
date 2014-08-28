@@ -5,15 +5,8 @@ import actionlib
 
 from sensor_msgs.msg import Joy
 from geometry_msgs.msg import Vector3
-
-roslib.load_manifest('robohow_sot')
-
-roslib.load_manifest('dynamic_graph_actionlib')
 from dynamic_graph_actionlib.msg import *
-
-roslib.load_manifest ('dynamic_graph_bridge')
 from dynamic_graph_bridge.srv import RunCommand
-
 
 ## Common part
 

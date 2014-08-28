@@ -1,0 +1,24 @@
+<package>
+  <name>sot_sandbox</name>
+  <version>0.1.0</version>
+
+  <description>
+  This package corresponds to my sandbox for sot elements.
+  It containts:
+  * an executable to start the controllers.
+  * an script to control the pattern generator using a joystick
+  </description>
+  <author>fkeith</author>
+  <maintainer email="Aertbelien@tobefilled.fr">Erwin Aertbelien</maintainer>
+  <license>BSD</license>
+  <url>...</url>
+  
+  <buildtool_depend>catkin</buildtool_depend> 
+  <build_depend>roscpp</build_depend>
+  <build_depend>dynamic_graph_bridge_msgs</build_depend>
+  <build_depend>sot-core</build_depend>
+  <run_depend>sot-core</run_depend>
+
+</package>
+
+
