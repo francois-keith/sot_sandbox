@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 2.4.6)
 
+include(cmake/base.cmake)
 include(cmake/pkg-config.cmake)
 project(sot_sandbox)
 
